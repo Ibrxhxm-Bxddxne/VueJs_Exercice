@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestionnaire de Tâches</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <h1>Gestionnaire de Tâches</h1>
+            
+            <task-form @add-task="addTask"></task-form>
+            
+            <button @click="hideTasks = !hideTasks" class="btn-toggle">
+                {{ hideTasks ? 'Afficher les tâches' : 'Masquer les tâches' }}
+            </button>
+
+            <task-list v-if="!hideTasks" :tasks="tasks"></task-list>
+
+            <div class="footer-stats">
+                <p>Tâches terminées : {{ completedCount }}</p>
+                <p>Tâches en attente : {{ pendingCount }}</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="./components/TaskForm.js"></script>
+    <script src="./components/TaskList.js"></script>
+    <script>
+        const { createApp } = Vue;
+        const app = createApp({
+            data() {
+                return {
+                    tasks: [
+                        { id: 1, title: 'Learn Vue.js', completed: false },
+                        { id: 2, title: 'Build a project', completed: false },
+                        { id: 3, title: 'Prepare to an Exam', completed: false }
+                    ],
+                    hideTasks: false
+                }
+            },
+            computed: {
+                completedCount() { return this.tasks.filter(t => t.completed).length },
+                pendingCount() { return this.tasks.filter(t => !t.completed).length }
+            },
+            methods: {
+                addTask(title) {
+                    this.tasks.push({ id: Date.now(), title, completed: false });
+                }
+            }
+        });
+        app.component('task-form', TaskForm);
+        app.component('task-list', TaskList);
+        app.mount('#app');
+    </script>
+</body>
+</html>
